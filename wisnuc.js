@@ -83,7 +83,7 @@ const clean = [
 const appifi = [
   // latest appifi tarball
   'rm -rf wisnuc/appifi-tarballs',
-  'mkdir wisnuc/appifi-tarballs',
+  'mkdir -p wisnuc/appifi-tarballs',
   'rm -rf wisnuc-tmp',
   'mkdir -p wisnuc-tmp/appifi',
   retrieveAsync,
