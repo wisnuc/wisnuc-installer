@@ -21,10 +21,10 @@ sudo ./imagify.sh
 ## 合成过程
 
 ```
-wisnuc.js           build-rootfs-emmc-base.sh           build-burn-base.sh
-   |                      |                                   |
-   v                      v                                   |
-wisnuc directory  + ws215i-rootfs-emmc-base.tar.gz            |
+wisnuc.js             build-rootfs-emmc-base.sh         build-burn-base.sh
+   |                          |                               |
+   v                          v                               |
+wisnuc directory  +   ws215i-rootfs-emmc-base.tar.gz          |
                   |                                           |
                   v                                           v
         ws215i-rootfs-emmc.tar.gz   +   ws215i-rootfs-burn-base(-debug).tar.gz

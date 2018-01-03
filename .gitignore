@@ -58,5 +58,10 @@ typings/
 .env
 
 *.tar.gz
+*.tar.xz
 
-target/
+/target_emmc/
+/target_burn/
+/wisnuc/
+/tmp/
+

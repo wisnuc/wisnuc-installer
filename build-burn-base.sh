@@ -11,7 +11,7 @@ mkdir -p ${TARGET}/wisnuc
 tar xzf assets/ubuntu-base-16.04.3-base-amd64.tar.gz -C ${TARGET}
 cp assets/linux-image-4.3.3.001+_001_amd64.deb ${TARGET}
 
-cp imageburn.sh ${TARGET}/wisnuc
+cp assets/imageburn.sh ${TARGET}/wisnuc
 
 cat <<EOF > ${TARGET}/etc/apt/sources.list
 deb http://cn.archive.ubuntu.com/ubuntu/ xenial main restricted
