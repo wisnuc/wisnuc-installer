@@ -6,6 +6,8 @@ const request = require('superagent')
 
 const log = console.log
 
+const TMPDIR = 'tmp/wisnuc'
+
 // constant
 const addr = 'https://raw.githubusercontent.com'
 // const updateUrl = `${addr}/wisnuc/appifi-bootstrap-update/release/appifi-bootstrap-update.packed.js`
@@ -75,29 +77,36 @@ const retrieveAsync = async () => {
 // repacked tarball file name
 const repacked = () => `appifi-${release.tag_name}-${release.id}-${release.target_commitish.slice(0,8)}.tar.gz`
 
-const clean = [ 
+const cleanAll = [ 
+  'mkdir -p tmp',
+  `rm -rf ${TMPDIR}`,
+  `mkdir -p ${TMPDIR}/appifi`,
   'rm -rf wisnuc', 
-  'mkdir wisnuc' 
+  'mkdir wisnuc',
+]
+
+const cleanAppifi = [
+  'mkdir -p tmp',
+  `rm -rf ${TMPDIR}`,
+  `mkdir -p ${TMPDIR}/appifi`,
+  'rm -rf wisnuc/appifi-tarballs',
+  'mkdir -p wisnuc/appifi-tarballs',
 ]
 
 const appifi = [
   // latest appifi tarball
-  'rm -rf wisnuc/appifi-tarballs',
-  'mkdir -p wisnuc/appifi-tarballs',
-  'rm -rf wisnuc-tmp',
-  'mkdir -p wisnuc-tmp/appifi',
   retrieveAsync,
-  () => `wget -O wisnuc-tmp/appifi-${release.tag_name}-orig.tar.gz ${release.tarball_url}`,
-  () => `tar xzf wisnuc-tmp/appifi-${release.tag_name}-orig.tar.gz -C wisnuc-tmp/appifi --strip-components=1`,  
-  async () => fs.writeFileAsync('wisnuc-tmp/appifi/.release.json', JSON.stringify(release, null, '  ')),
-  () => `tar czf wisnuc/appifi-tarballs/${repacked()} -C wisnuc-tmp/appifi .`
+  () => `wget -O ${TMPDIR}/appifi-${release.tag_name}-orig.tar.gz ${release.tarball_url}`,
+  () => `tar xzf ${TMPDIR}/appifi-${release.tag_name}-orig.tar.gz -C ${TMPDIR}/appifi --strip-components=1`,  
+  async () => fs.writeFileAsync(`${TMPDIR}/appifi/.release.json`, JSON.stringify(release, null, '  ')),
+  () => `tar czf wisnuc/appifi-tarballs/${repacked()} -C ${TMPDIR}/appifi .`
 ]
 
 const node = [
   // download node 8.9.3
-  `wget -O wisnuc-tmp/${nodeTar} ${nodeUrl}`,
+  `wget -O ${TMPDIR}/${nodeTar} ${nodeUrl}`,
   `mkdir -p wisnuc/node/${nodeVer}`,
-  `tar xJf wisnuc-tmp/${nodeTar} -C wisnuc/node/${nodeVer} --strip-components=1`,
+  `tar xJf ${TMPDIR}/${nodeTar} -C wisnuc/node/${nodeVer} --strip-components=1`,
   `ln -s ${nodeVer} wisnuc/node/base`,
 ]
 
@@ -120,8 +129,8 @@ const bootstrap = [
 ]
 
 const jobs = process.argv.find(arg => arg === '--all') 
-  ? [...clean, ...appifi, ...node, ...wetty, ...bootstrapUpdate, ...bootstrap]
-  : appifi
+  ? [...cleanAll, ...appifi, ...node, ...wetty, ...bootstrapUpdate, ...bootstrap]
+  : [...cleanAppifi, ...appifi]
 
 spawnCommandAsync(jobs).then(x => x, e => console.log(e))
 
