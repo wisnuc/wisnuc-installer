@@ -4,6 +4,7 @@
 # set -e
 
 UUID=7dec5069-3524-4a8f-b838-ee00613cd30b
+MNT=tmp/mnt
 TMP=tmp/imagify
 
 mkdir -p tmp
@@ -22,6 +23,8 @@ losetup -d /dev/loop0
 
 rm -rf $TMP
 mkdir -p $TMP
+mkdir -p $MNT
+
 
 echo "untar rootfs-emmc-base into $TMP dir"
 tar xzf ws215i-rootfs-emmc-base.tar.gz -C $TMP
@@ -31,8 +34,6 @@ cp -r wisnuc $TMP
 
 echo "tar ws215i-rootfs-emmc.tar.gz"
 tar czf ws215i-rootfs-emmc.tar.gz -C $TMP .
-
-mkdir -p img-mnt
 
 echo "create $IMAGEFILE"
 rm -rf $IMAGEFILE
@@ -59,21 +60,21 @@ echo "make ext4 file system"
 mkfs.ext4 -U $UUID /dev/loop0p1
 
 echo "mount"
-mount -t ext4 /dev/loop0p1 img-mnt
+mount -t ext4 /dev/loop0p1 $MNT
 
 if [ -z "$1" ]; then
   echo "untar ws215i-rootfs-burn-base.tar.gz" 
-  tar xzf ws215i-rootfs-burn-base.tar.gz -C img-mnt
+  tar xzf ws215i-rootfs-burn-base.tar.gz -C $MNT
 else
   echo "untar ws215i-rootfs-burn-debug.tar.gz" 
-  tar xzf ws215i-rootfs-burn-debug.tar.gz -C img-mnt
+  tar xzf ws215i-rootfs-burn-debug.tar.gz -C $MNT
 fi
 
 echo "cp ws215i-rootfs-emmc.tar.gz" 
-cp ws215i-rootfs-emmc.tar.gz img-mnt/wisnuc 
+cp ws215i-rootfs-emmc.tar.gz ${MNT}/wisnuc 
 
 sync
-umount img-mnt
+umount $MNT
 losetup -d /dev/loop0
 
 echo "$IMAGEFILE successfully created"
