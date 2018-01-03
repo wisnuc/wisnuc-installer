@@ -63,10 +63,10 @@ mount -t ext4 /dev/loop0p1 img-mnt
 
 if [ -z "$1" ]; then
   echo "untar ws215i-rootfs-burn-base.tar.gz" 
-  tar xvzf ws215i-rootfs-burn-base.tar.gz -C img-mnt
+  tar xzf ws215i-rootfs-burn-base.tar.gz -C img-mnt
 else
   echo "untar ws215i-rootfs-burn-debug.tar.gz" 
-  tar xvzf ws215i-rootfs-burn-debug.tar.gz -C img-mnt
+  tar xzf ws215i-rootfs-burn-debug.tar.gz -C img-mnt
 fi
 
 echo "cp ws215i-rootfs-emmc.tar.gz" 
