@@ -1,0 +1,23 @@
+{
+  "name": "ws215i-rootfs",
+  "version": "1.0.0",
+  "description": "Build rootfs for ws215i",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wisnuc/ws215i-rootfs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wisnuc/ws215i-rootfs/issues"
+  },
+  "homepage": "https://github.com/wisnuc/ws215i-rootfs#readme",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "superagent": "^3.8.2"
+  }
+}
