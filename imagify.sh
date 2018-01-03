@@ -4,8 +4,11 @@
 # set -e
 
 UUID=7dec5069-3524-4a8f-b838-ee00613cd30b
-TMP=imagify-tmp
+TMP=tmp/imagify
 
+mkdir -p tmp
+rm -rf $TMP
+mkdir $TMP
 
 if [ -z $1 ]; then
   COUNT=1024
