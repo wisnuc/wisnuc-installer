@@ -28,13 +28,13 @@ rm -rf $TMP
 mkdir -p $TMP
 mkdir -p $MNT
 
-echo "untar rootfs-emmc-base into $TMP dir"
+echo "untar $OUTPUT/ws215i-rootfs-emmc-base.tar.gz into $TMP dir"
 tar xzf $OUTPUT/ws215i-rootfs-emmc-base.tar.gz -C $TMP
 
-echo "cp wisnuc dir"
+echo "cp $OUTPUT/wisnuc into $TMP dir"
 cp -r $OUTPUT/wisnuc $TMP
 
-echo "tar ws215i-rootfs-emmc.tar.gz"
+echo "tar $OUTPUT/ws215i-rootfs-emmc.tar.gz"
 tar czf $OUTPUT/ws215i-rootfs-emmc.tar.gz -C $TMP .
 
 echo "create $IMAGEFILE"
@@ -79,8 +79,6 @@ sync
 umount $MNT
 losetup -d /dev/loop0
 
-echo "$IMAGEFILE successfully created"
-
 # for node version
 # readlink output/wisnuc/node/base  -> eg. 8.9.3
 NODEVER=$(readlink output/wisnuc/node/base)
@@ -99,8 +97,9 @@ else
   FILENAME=ws215i-ubuntu-16.04.3-node-${NODEVER}-appifi-${APPIFIVER}-build-${TIMESTAMP}.img
 fi
 
-mv $IMAGEFILE ${OUTPUT}/${FILENAME}
+mv $IMAGEFILE $OUTPUT/$FILENAME
 
+echo "$OUTPUT/$FILENAME successfully created"
 
 
 
