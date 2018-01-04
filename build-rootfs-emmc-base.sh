@@ -2,11 +2,13 @@
 
 set -e
 
-TARGET=target_emmc
-
-mkdir -p assets
+TARGET=target/emmc
+OUTPUT=output
 
 rm -rf ${TARGET}
+mkdir ${TARGET}
+
+# create the empty directory
 mkdir -p ${TARGET}/wisnuc
 
 tar xzf assets/ubuntu-base-16.04.3-base-amd64.tar.gz -C ${TARGET}
@@ -185,7 +187,7 @@ rm ${TARGET}/etc/resolv.conf
 # create symbolic link as systemd-resolved requires.
 ln -sf /run/systemd/resolve/resolv.conf ${TARGET}/etc/resolv.conf
 
-tar czf ws215i-rootfs-emmc-base.tar.gz -C ${TARGET} .
+tar czf ${OUTPUT}/ws215i-rootfs-emmc-base.tar.gz -C ${TARGET} .
 
 echo done
 

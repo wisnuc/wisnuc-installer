@@ -60,18 +60,15 @@ typings/
 *.tar.gz
 *.tar.xz
 
-/target_emmc/
-/target_burn/
-/wisnuc/
-
 # ignore everthing inside 
-/target/*
 /tmp/*
+/target/*
+/output/*
 
 # except the directory itself
-!target/.gitkeep
 !tmp/.gitkeep
-
+!target/.gitkeep
+!output/.gitkeep
 
 
 

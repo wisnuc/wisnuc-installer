@@ -29,14 +29,14 @@ sudo ./imagify.sh
 图示如下：
 
 ```
-wisnuc.js             build-rootfs-emmc-base.sh         build-burn-base.sh
+wisnuc.js           build-rootfs-emmc-base.sh           build-burn-base.sh
    |                            |                             |
    v                            v                             |
-wisnuc directory  +   ws215i-rootfs-emmc-base.tar.gz          |
-                  |                                           |
+output/wisnuc dir + output/ws215i-rootfs-emmc-base.tar.gz     |
+                  | (imagify)                                 |
                   v                                           v
-        ws215i-rootfs-emmc.tar.gz   +   ws215i-rootfs-burn-base(-debug).tar.gz
-                                    |
+        ws215i-rootfs-emmc.tar.gz   +   output/ws215i-rootfs-burn-base(-debug).tar.gz
+                                    | (imagify)
                                     v
                                 imagefile(-debug)
 ```
@@ -48,7 +48,7 @@ wisnuc directory  +   ws215i-rootfs-emmc-base.tar.gz          |
 该脚本合成在目标系统上预部署的`/wisnuc`目录，包括：
 
 1. 建立目录结构
-2. node
+2. 安装node
 3. wisnuc-bootstrap
 4. wisnuc-bootstrap-update
 5. wetty
@@ -61,8 +61,9 @@ wisnuc directory  +   ws215i-rootfs-emmc-base.tar.gz          |
 该脚本支持参数`--all`，首次使用应该使用该参数。
 
 ```bash
-node wisnuc.js --all	# 更新全部
-node wisnuc.js			# 仅更新appifi
+node wisnuc.js                  # 更新全部
+node wisnuc.js --appifi-only    # 仅更新appifi
+node wisnuc.js -a               # --appifi-only
 ```
 
 

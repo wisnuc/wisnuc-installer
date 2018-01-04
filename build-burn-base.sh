@@ -3,7 +3,10 @@
 set -e
 
 UUID=7dec5069-3524-4a8f-b838-ee00613cd30b
-TARGET=target_burn
+
+TARGET=target/burn
+OUTPUT=output
+
 
 rm -rf ${TARGET}
 mkdir -p ${TARGET}/wisnuc
@@ -67,10 +70,7 @@ chroot ${TARGET} /bin/bash -c "dpkg -i linux-image-4.3.3.001+_001_amd64.deb"
 # this is not necessary, install kernel will update initramfs automatically
 # chroot ${TARGET} /bin/bash -c "update-initramfs -u -k all"
 
-if [ -z "$1" ]; then
-  echo "skip extra packages and enable auto-burn"
-  chroot ${TARGET} /bin/bash -c "systemctl enable wisnuc-imageburn"
-else 
+if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
   echo "install extra packages"
   chroot ${TARGET} /bin/bash -c "apt -y install sudo openssh-server net-tools iputils-ping parted vim"
   chroot ${TARGET} /bin/bash -c "useradd wisnuc -b /home -m -s /bin/bash"
@@ -78,6 +78,9 @@ else
   chroot ${TARGET} /bin/bash -c "adduser wisnuc sudo"
   chroot ${TARGET} /bin/bash -c "systemctl enable systemd-networkd"
   chroot ${TARGET} /bin/bash -c "systemctl enable systemd-resolved"
+else
+  echo "skip extra packages and enable auto-burn"
+  chroot ${TARGET} /bin/bash -c "systemctl enable wisnuc-imageburn"
 fi
 
 ln -s vmlinuz-4.3.3.001+ ${TARGET}/boot/bzImage
@@ -93,14 +96,14 @@ umount ${TARGET}/dev
 
 rm ${TARGET}/linux-image-4.3.3.001+_001_amd64.deb
 
-if [ -z "$1" ]; then
+if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
+  TARNAME=ws215i-rootfs-burn-base-debug.tar.gz
+else
   TARNAME=ws215i-rootfs-burn-base.tar.gz
-else 
-  TARNAME=ws215i-rootfs-burn-debug.tar.gz
-fi 
+fi
 
-echo "tar $TARNAME"
-tar czf $TARNAME -C ${TARGET} .
+echo "tar $OUTPUT/$TARNAME"
+tar czf $OUTPUT/$TARNAME -C ${TARGET} .
  
 echo "done"
 
