@@ -59,6 +59,8 @@ typings/
 
 *.tar.gz
 *.tar.xz
+*.img
+*.final/
 
 # ignore everthing inside 
 /tmp/*

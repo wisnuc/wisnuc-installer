@@ -19,7 +19,7 @@ if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
   IMAGEFILE=tmp/imagefile-debug
 else
   COUNT=1024
-  IMAGEFILE=tmpimagefile
+  IMAGEFILE=tmp/imagefile
 fi
 
 losetup -d /dev/loop0
@@ -29,10 +29,10 @@ mkdir -p $TMP
 mkdir -p $MNT
 
 echo "untar rootfs-emmc-base into $TMP dir"
-tar xzf ws215i-rootfs-emmc-base.tar.gz -C $TMP
+tar xzf $OUTPUT/ws215i-rootfs-emmc-base.tar.gz -C $TMP
 
 echo "cp wisnuc dir"
-cp -r wisnuc $TMP
+cp -r $OUTPUT/wisnuc $TMP
 
 echo "tar ws215i-rootfs-emmc.tar.gz"
 tar czf $OUTPUT/ws215i-rootfs-emmc.tar.gz -C $TMP .
