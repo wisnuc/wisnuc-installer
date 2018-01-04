@@ -65,3 +65,8 @@ typings/
 /wisnuc/
 /tmp/
 
+# ignore everthing inside 
+target/*
+
+# except the directory itself
+!target/.gitkeep

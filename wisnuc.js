@@ -2,11 +2,20 @@ const Promise = require('bluebird')
 const path = require('path')
 const fs = Promise.promisifyAll(require('fs'))
 const child = Promise.promisifyAll(require('child_process'))
+const rimraf = require('rimraf')
+const mkdirp = require('mkdirp')
+const rimrafAsync = Promise.promisify(rimraf)
+const mkdirpAsync = Promise.promisify(mkdirp)
 const request = require('superagent')
 
 const log = console.log
 
 const TMPDIR = 'tmp/wisnuc'
+const WISNUC = 'output/wisnuc'
+
+/** create parent dirs **/
+mkdirp.sync('tmp')
+mkdirp.sync('output')
 
 // constant
 const addr = 'https://raw.githubusercontent.com'
@@ -60,7 +69,6 @@ const spawnCommandAsync = async command => {
   }
 }
 
-
 // retrieve lastest non-beta release object
 const retrieveAsync = async () => {
   let releases = await new Promise((resolve, reject) => request
@@ -78,50 +86,54 @@ const retrieveAsync = async () => {
 const repacked = () => `appifi-${release.tag_name}-${release.id}-${release.target_commitish.slice(0,8)}.tar.gz`
 
 const cleanAll = [ 
-  'mkdir -p tmp',
   `rm -rf ${TMPDIR}`,
-  `mkdir -p ${TMPDIR}/appifi`,
+  `mkdir -p ${TMPDIR}`,
   'rm -rf wisnuc', 
   'mkdir wisnuc',
 ]
 
-const cleanAppifi = [
-  'mkdir -p tmp',
-  `rm -rf ${TMPDIR}`,
-  `mkdir -p ${TMPDIR}/appifi`,
-  'rm -rf wisnuc/appifi-tarballs',
-  'mkdir -p wisnuc/appifi-tarballs',
-]
-
+// does not reset ${WISNUC}, only ${WISNUC}/appifi-tarballs
+// does not reset tmp dir, only ${TMPDIR}/appifi
 const appifi = [
-  // latest appifi tarball
+  `rm -rf wisnuc/appifi-tarballs`,
+  `mkdir wisnuc/appifi-tarballs`,
+  `rm -rf ${TMPDIR}/appifi`,
+  `mkdir ${TMPDIR}/appifi`,
+
+  // retrieve latest (nonpre-) release
   retrieveAsync,
   () => `wget -O ${TMPDIR}/appifi-${release.tag_name}-orig.tar.gz ${release.tarball_url}`,
+  `mkdir -p ${TMPDIR}/appifi`,
   () => `tar xzf ${TMPDIR}/appifi-${release.tag_name}-orig.tar.gz -C ${TMPDIR}/appifi --strip-components=1`,  
   async () => fs.writeFileAsync(`${TMPDIR}/appifi/.release.json`, JSON.stringify(release, null, '  ')),
   () => `tar czf wisnuc/appifi-tarballs/${repacked()} -C ${TMPDIR}/appifi .`
 ]
 
+// use tmp dir
 const node = [
   // download node 8.9.3
+
   `wget -O ${TMPDIR}/${nodeTar} ${nodeUrl}`,
   `mkdir -p wisnuc/node/${nodeVer}`,
   `tar xJf ${TMPDIR}/${nodeTar} -C wisnuc/node/${nodeVer} --strip-components=1`,
   `ln -s ${nodeVer} wisnuc/node/base`,
 ]
 
+// does not use tmp dir
 const wetty = [
   // download wetty
   'wget -O wisnuc/wetty https://github.com/wisnuc/wetty/raw/master/wetty',
   'chmod a+x wisnuc/wetty',
 ]
 
+// does not use tmp dir
 const bootstrapUpdate = [
   // download wisnuc-bootstrap-update
   `wget -O wisnuc/wisnuc-bootstrap-update ${updateUrl}`,
   `chmod a+x wisnuc/wisnuc-bootstrap-update`,
 ]
 
+// does not use tmp dir
 const bootstrap = [
   // download wisnuc-bootstrap
   `wget -O wisnuc/wisnuc-bootstrap ${bootstrapUrl}`,
@@ -130,7 +142,7 @@ const bootstrap = [
 
 const jobs = process.argv.find(arg => arg === '--all') 
   ? [...cleanAll, ...appifi, ...node, ...wetty, ...bootstrapUpdate, ...bootstrap]
-  : [...cleanAppifi, ...appifi]
+  : appifi
 
 spawnCommandAsync(jobs).then(x => x, e => console.log(e))
 

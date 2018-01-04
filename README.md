@@ -16,14 +16,22 @@ sudo ./imagify.sh
 
 
 
-
-
 ## 合成过程
+
+`wisnuc.js`脚本文件用于生成目标系统上的预部署目录`/wisnuc`；
+
+`build-rootfs-emmc-base.sh`脚本用于生成ws215i的emmc的rootfs，不包含预装的`/wisnuc`目录；
+
+`build-burn-base.sh`脚本用于生成烧录U盘的rootfs，它是最小化的ubuntu，可以在ws215i上boot和执行自动烧录脚本。
+
+`imagify.sh`脚本会把这些内容组合起来。首先把ws215i的base rootfs和wisnuc目录合成为`ws215i-rootfs-emmc.tar.gz`文件，它是完整的rootfs；然后imagify会使用loop device挂载imagefile，把用于usb的rootfs展开进去，把emmc rootfs的压缩文件放进去，即获得可用于烧录ws215i的U盘镜像。
+
+图示如下：
 
 ```
 wisnuc.js             build-rootfs-emmc-base.sh         build-burn-base.sh
-   |                          |                               |
-   v                          v                               |
+   |                            |                             |
+   v                            v                             |
 wisnuc directory  +   ws215i-rootfs-emmc-base.tar.gz          |
                   |                                           |
                   v                                           v

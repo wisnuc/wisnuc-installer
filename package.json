@@ -18,6 +18,8 @@
   "homepage": "https://github.com/wisnuc/ws215i-rootfs#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.2",
     "superagent": "^3.8.2"
   }
 }
