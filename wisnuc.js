@@ -96,7 +96,7 @@ const cleanAll = [
 // does not reset tmp dir, only ${TMPDIR}/appifi
 const appifi = [
   `rm -rf wisnuc/appifi-tarballs`,
-  `mkdir wisnuc/appifi-tarballs`,
+  `mkdir -p wisnuc/appifi-tarballs`,
   `rm -rf ${TMPDIR}/appifi`,
   `mkdir ${TMPDIR}/appifi`,
 
@@ -111,8 +111,7 @@ const appifi = [
 
 // use tmp dir
 const node = [
-  // download node 8.9.3
-
+  // download node and extract to target
   `wget -O ${TMPDIR}/${nodeTar} ${nodeUrl}`,
   `mkdir -p wisnuc/node/${nodeVer}`,
   `tar xJf ${TMPDIR}/${nodeTar} -C wisnuc/node/${nodeVer} --strip-components=1`,
@@ -138,7 +137,7 @@ const bootstrap = [
   // download wisnuc-bootstrap
   `wget -O wisnuc/wisnuc-bootstrap ${bootstrapUrl}`,
   `chmod a+x wisnuc/wisnuc-bootstrap`,
-]
+] 
 
 const jobs = process.argv.find(arg => arg === '--all') 
   ? [...cleanAll, ...appifi, ...node, ...wetty, ...bootstrapUpdate, ...bootstrap]

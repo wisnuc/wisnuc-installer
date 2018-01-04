@@ -63,10 +63,15 @@ typings/
 /target_emmc/
 /target_burn/
 /wisnuc/
-/tmp/
 
 # ignore everthing inside 
-target/*
+/target/*
+/tmp/*
 
 # except the directory itself
 !target/.gitkeep
+!tmp/.gitkeep
+
+
+
+
