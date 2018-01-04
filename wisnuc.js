@@ -88,15 +88,15 @@ const repacked = () => `appifi-${release.tag_name}-${release.id}-${release.targe
 const cleanAll = [ 
   `rm -rf ${TMPDIR}`,
   `mkdir -p ${TMPDIR}`,
-  'rm -rf wisnuc', 
-  'mkdir wisnuc',
+  `rm -rf ${WISNUC}`, 
+  `mkdir ${WISNUC}`,
 ]
 
 // does not reset ${WISNUC}, only ${WISNUC}/appifi-tarballs
 // does not reset tmp dir, only ${TMPDIR}/appifi
 const appifi = [
-  `rm -rf wisnuc/appifi-tarballs`,
-  `mkdir -p wisnuc/appifi-tarballs`,
+  `rm -rf ${WISNUC}/appifi-tarballs`,
+  `mkdir -p ${WISNUC}/appifi-tarballs`,
   `rm -rf ${TMPDIR}/appifi`,
   `mkdir ${TMPDIR}/appifi`,
 
@@ -106,42 +106,44 @@ const appifi = [
   `mkdir -p ${TMPDIR}/appifi`,
   () => `tar xzf ${TMPDIR}/appifi-${release.tag_name}-orig.tar.gz -C ${TMPDIR}/appifi --strip-components=1`,  
   async () => fs.writeFileAsync(`${TMPDIR}/appifi/.release.json`, JSON.stringify(release, null, '  ')),
-  () => `tar czf wisnuc/appifi-tarballs/${repacked()} -C ${TMPDIR}/appifi .`
+  () => `tar czf ${WISNUC}/appifi-tarballs/${repacked()} -C ${TMPDIR}/appifi .`
 ]
 
 // use tmp dir
 const node = [
   // download node and extract to target
   `wget -O ${TMPDIR}/${nodeTar} ${nodeUrl}`,
-  `mkdir -p wisnuc/node/${nodeVer}`,
-  `tar xJf ${TMPDIR}/${nodeTar} -C wisnuc/node/${nodeVer} --strip-components=1`,
-  `ln -s ${nodeVer} wisnuc/node/base`,
+  `mkdir -p ${WISNUC}/node/${nodeVer}`,
+  `tar xJf ${TMPDIR}/${nodeTar} -C ${WISNUC}/node/${nodeVer} --strip-components=1`,
+  `ln -s ${nodeVer} ${WISNUC}/node/base`,
 ]
 
 // does not use tmp dir
 const wetty = [
   // download wetty
-  'wget -O wisnuc/wetty https://github.com/wisnuc/wetty/raw/master/wetty',
-  'chmod a+x wisnuc/wetty',
+  `wget -O ${WISNUC}/wetty https://github.com/wisnuc/wetty/raw/master/wetty`,
+  `chmod a+x ${WISNUC}/wetty`,
 ]
 
 // does not use tmp dir
 const bootstrapUpdate = [
-  // download wisnuc-bootstrap-update
-  `wget -O wisnuc/wisnuc-bootstrap-update ${updateUrl}`,
-  `chmod a+x wisnuc/wisnuc-bootstrap-update`,
+  `wget -O ${WISNUC}/wisnuc-bootstrap-update ${updateUrl}`,
+  `chmod a+x ${WISNUC}/wisnuc-bootstrap-update`,
 ]
 
 // does not use tmp dir
 const bootstrap = [
-  // download wisnuc-bootstrap
-  `wget -O wisnuc/wisnuc-bootstrap ${bootstrapUrl}`,
-  `chmod a+x wisnuc/wisnuc-bootstrap`,
+  `wget -O ${WISNUC}/wisnuc-bootstrap ${bootstrapUrl}`,
+  `chmod a+x ${WISNUC}/wisnuc-bootstrap`,
 ] 
 
-const jobs = process.argv.find(arg => arg === '--all') 
-  ? [...cleanAll, ...appifi, ...node, ...wetty, ...bootstrapUpdate, ...bootstrap]
-  : appifi
+const tree = [
+  `tree ${WISNUC} -L 3`
+]
+
+const jobs = process.argv.find(arg => arg === '-a' || arg === '--appifi-only') 
+  ? [...appifi, ...tree]
+  : [...cleanAll, ...appifi, ...node, ...wetty, ...bootstrapUpdate, ...bootstrap, ...tree]
 
 spawnCommandAsync(jobs).then(x => x, e => console.log(e))
 
