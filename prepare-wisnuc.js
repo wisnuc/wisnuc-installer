@@ -24,7 +24,8 @@ const updateUrl = `${addr}/wisnuc/wisnuc-bootstrap-update/release/wisnuc-bootstr
 // const bootstrapUrl = `${addr}/wisnuc/appifi-bootstrap/release/appifi-bootstrap.js.sha1`
 const bootstrapUrl = `${addr}/wisnuc/wisnuc-bootstrap/release/wisnuc-bootstrap-linux-x64`
 // node
-const nodeUrl = 'https://nodejs.org/dist/v8.9.3/node-v8.9.3-linux-x64.tar.xz'
+// const nodeUrl = 'https://nodejs.org/dist/v8.9.3/node-v8.9.3-linux-x64.tar.xz'
+const nodeUrl = 'https://nodejs.org/dist/v8.9.4/node-v8.9.4-linux-x64.tar.xz'
 const nodeTar = nodeUrl.split('/').pop()
 const nodeVer = nodeTar.split('-')[1].slice(1)
 
