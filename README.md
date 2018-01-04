@@ -3,15 +3,31 @@
 
 
 
+开发者也可以修改本项目代码自行制作：
+
+1. 定制的ws215i rootfs和烧录U盘镜像
+2. 自己定制的ws215i系统U盘（即操作系统运行在U盘上，而不是mmc上）
+
+
+
+本项目以Ubuntu Base 16.04.3 LTS版本为基础，该rootfs压缩包已经包含在本项目中。
+
+
+
 ## Quick Start
 
 ```bash
+# 中华人民共和国境内开发者，执行下面3个命令时建议使用VPN
 git clone https://github.com/wisnuc/ws215i-rootfs
 npm i
-node wisnuc.js --all
+node prepare-wisnuc.js --all
+
+# 中华人民共和国境内开发者，执行下面3个命令时建议关闭VPN
 sudo ./build-rootfs-emmc-base.sh
 sudo ./build-burn-base.sh
-sudo ./imagify.sh
+sudo ./build-image.sh
+
+# 输出文件位于output目录下
 ```
 
 
@@ -29,21 +45,24 @@ sudo ./imagify.sh
 图示如下：
 
 ```
-wisnuc.js           build-rootfs-emmc-base.sh           build-burn-base.sh
+prepare-wisnuc.js     build-rootfs-emmc-base.sh           build-burn-base.sh
    |                            |                             |
    v                            v                             |
 output/wisnuc dir + output/ws215i-rootfs-emmc-base.tar.gz     |
-                  | (imagify)                                 |
+                  |                                           |
+                  | build-image.sh                            |
                   v                                           v
-        ws215i-rootfs-emmc.tar.gz   +   output/ws215i-rootfs-burn-base(-debug).tar.gz
-                                    | (imagify)
+ output/ws215i-rootfs-emmc.tar.gz   +   output/ws215i-rootfs-burn-base(-debug).tar.gz
+                                    |
+                                    | build-image.sh
                                     v
-                                imagefile(-debug)
+                                (example)
+  output/ws215i-ubuntu-16.04.3-node-8.9.3-appifi-1.0.11-build-180104-171627.img
 ```
 
 
 
-## wisnuc.js
+## prepare-wisnuc.js
 
 该脚本合成在目标系统上预部署的`/wisnuc`目录，包括：
 
@@ -54,11 +73,11 @@ output/wisnuc dir + output/ws215i-rootfs-emmc-base.tar.gz     |
 5. wetty
 6. appifi
 
-输出为当前目录的`wisnuc`目录。
+输出为当前目录的`output/wisnuc`目录。
 
 运行该脚本无须root权限。
 
-该脚本支持参数`--all`，首次使用应该使用该参数。
+该脚本支持参数`--appifi-only`。
 
 ```bash
 node wisnuc.js                  # 更新全部
@@ -70,11 +89,13 @@ node wisnuc.js -a               # --appifi-only
 
 ## build-rootfs-emmc-base.sh
 
-该脚本创建ws215i的rootfs (emmc)压缩包文件。执行该脚本需要root权限。
+该脚本创建ws215i的rootfs (emmc)压缩包文件，但不包含预装的`/wisnuc`目录。
+
+执行该脚本需要root权限（`sudo`）。
 
 过程如下：
 
-1. 创建`target_emmc`目录
+1. 创建`target/emmc`目录
 2. 在目录下安装ubuntu base
 3. 修改apt源为中国镜像
 4. 创建如下systemd unit
@@ -98,9 +119,7 @@ node wisnuc.js -a               # --appifi-only
    1. 清理内核deb文件
    2. 清理apt
    3. 更新resolv.conf (symlink to systemd resolv.conf)
-7. 最后把rootfs打包成`ws215i-rootfs-emmc-base.tar.gz`
-
-最终输出的压缩包文件不包含目标系统`/wisnuc`目录下所有的预先部署文件。
+7. 最后把rootfs打包成`output/ws215i-rootfs-emmc-base.tar.gz`
 
 
 
@@ -108,46 +127,71 @@ node wisnuc.js -a               # --appifi-only
 
 该脚本生成USB烧录盘的最小文件系统，USB烧录盘本身也是一个包含完整rootfs的ubuntu运行系统，不只是ramdisk。其内容和emmc镜像相仿，做了裁剪。
 
-
+该脚本需要root权限（`sudo`）。
 
 该脚本接受参数`--debug`，debug模式下最终输出的镜像文件会包含openssh server，方便开发者调试。
 
-生产模式下输出的文件是`ws215i-rootfs-burn-base.tar.gz`
-
-debug模式下输出的文件是`ws215i-rootfs-burn-debug.tar.gz`
-
-
-
-## imagify.sh
-
-`imagify.sh` generates the USB drive image file.
+```bash
+sudo ./build-burn-base.sh            # 生成output/ws215i-rootfs-burn-base.tar.gz
+sudo ./build-burn-base.sh --debug    # 生成output/ws215i-rootfs-burn-base-debug.tar.gz
+```
 
 
 
-It requires:
+## build-image.sh
 
-1. `rootfs-emmc-base.tar.gz`
-2. `ws215i-rootfs-burn-base.tar.gz` for production or `ws215i-rootfs-burn-debug.tar.gz` for debug or development.
+该脚本合成上述内容：
 
+1. 先把emmc rootfs (base)和预置的`/wisnuc`目录合成成为`output/ws215i-rootfs-emmc.tar.gz`压缩包；
+2. 创建一个临时文件，用loop device挂载，然后创建分区和ext4文件系统；
+3. 展开burn rootfs (base)到目标文件系统上；
+4. 装入合成的压缩包；
+5. 生成最终的镜像文件。
 
+该脚本需要root权限。
 
+该脚本支持`--debug`参数。如果提供该参数，会使用debug版本的burn rootfs。
 
-
-
-
-
-
-
-
-This project includes files to build rootfs for ws215i, including:
-
-1. rootfs for emmc
-2. rootfs for usb drive burner.
+输出文件的命名规则如下：
 
 
+```bash
+# 非debug版本
+ws215i-ubuntu-16.04.3-node-${Node版本}-appifi-${Appifi版本}-build-${时间戳}.img
+
+# debug版本
+ws215i-ubuntu-16.04.3-node-${Node版本}-appifi-${Appifi版本}-build-${时间戳}-debug.img
+```
+
+其中时间戳格式为`yymmdd-HHMMSS`，例如`180104-171627`。
+
+
+
+## 文件
+
+`assets`目录 下包含：
+
+1. ws215i的内核包（debian格式），内核版本为4.3.3
+2. Ubuntu Base压缩包
+3. apt的sources.list文件，使用中国源
 
 
 
 
 
-Build rootfs for ws215i
+## 其他问题
+
+1. 该制作过程使用了chroot，mount，loop device等功能，无法在绝大多数云主机上运行；
+2. 注意chroot环境下resolv.conf的配置；
+3. 因为有chroot和装包过程，所以systemd官方的firstboot服务无法使用，我们自己定义了一个firstboot service；
+
+
+遇到任何问题请在本项目中提交issue，谢谢。
+
+
+
+lewis.ma#winsuntech.cn
+
+2018-01-04
+
+
