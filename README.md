@@ -26,8 +26,10 @@ node prepare-wisnuc.js --all
 sudo ./build-rootfs-emmc-base.sh
 sudo ./build-burn-base.sh
 sudo ./build-image.sh
+```
 
-# 输出文件位于output目录下
+输出文件位于output目录下
+```
 $ tree output -L 3
 output
 ├── wisnuc
@@ -44,6 +46,8 @@ output
 ├── ws215i-rootfs-emmc.tar.gz
 └── ws215i-ubuntu-16.04.3-node-8.9.3-appifi-1.0.11-build-180104-180015.img
 ```
+其中扩展名为`img`的文件为镜像文件，可以直接`dd`到U盘上使用。
+
 
 
 
