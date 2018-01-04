@@ -101,7 +101,7 @@ mv $IMAGEFILE $OUTPUT/$FILENAME
 
 echo "$OUTPUT/$FILENAME successfully created"
 
-
+tree $OUTPUT -L 3
 
 
 
