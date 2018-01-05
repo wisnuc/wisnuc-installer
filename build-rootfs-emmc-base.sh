@@ -53,58 +53,10 @@ cat <<EOF > ${TARGET}/etc/systemd/timesyncd.conf
 FallbackNTP=ntp.ubuntu.com
 EOF
 
-cat <<EOF > ${TARGET}/lib/systemd/system/wisnuc-bootstrap-update.service
-[Unit]
-Description=Wisnuc Bootstrap Update
-
-[Service]
-Type=simple
-ExecStart=/wisnuc/wisnuc-bootstrap-update
-EOF
-
-cat <<EOF > ${TARGET}/lib/systemd/system/wisnuc-bootstrap-update.timer
-[Unit]
-Description=Runs Appifi Bootstrap Update every 4 hour
-
-[Timer]
-OnBootSec=1min
-OnUnitActiveSec=4h
-Unit=wisnuc-bootstrap-update.service
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-cat <<EOF > ${TARGET}/lib/systemd/system/wisnuc-bootstrap.service
-[Unit]
-Description=Wisnuc Bootstrap Service
-After=network.target
-
-[Service]
-Type=idle
-ExecStartPre=/bin/cp /wisnuc/wisnuc-bootstrap /wisnuc/wisnuc-bootstrap-run
-ExecStart=/wisnuc/wisnuc-bootstrap-run
-TimeoutStartSec=30
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-cat <<EOF > ${TARGET}/lib/systemd/system/wetty.service
-[Unit]
-Description=Wetty (Web Terminal) Service
-After=network.target
-
-[Service]
-Type=idle
-ExecStart=/wisnuc/wetty -p 3002
-TimeoutStartSec=30
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOF
+cp assets/wisnuc-bootstrap-update.service ${TARGET}/lib/systemd/system/wisnuc-bootstrap-update.service
+cp assets/wisnuc-bootstrap-update.timer ${TARGET}/lib/systemd/system/wisnuc-bootstrap-update.timer
+cp assets/wisnuc-bootstrap.service ${TARGET}/lib/systemd/system/wisnuc-bootstrap.service
+cp assets/wetty.service ${TARGET}/lib/systemd/system/wetty.service
 
 cat <<EOF > ${TARGET}/etc/systemd/network/wired.network
 [Match]

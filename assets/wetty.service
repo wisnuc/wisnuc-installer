@@ -1,0 +1,12 @@
+[Unit]
+Description=Wetty (Web Terminal) Service
+After=network.target
+
+[Service]
+Type=idle
+ExecStart=/wisnuc/wetty -p 3002
+TimeoutStartSec=30
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

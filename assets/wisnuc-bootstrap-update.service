@@ -1,0 +1,6 @@
+[Unit]
+Description=Wisnuc Bootstrap Update
+
+[Service]
+Type=simple
+ExecStart=/wisnuc/wisnuc-bootstrap-update

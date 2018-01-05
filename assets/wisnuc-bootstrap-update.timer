@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs Appifi Bootstrap Update every 4 hour
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=4h
+Unit=wisnuc-bootstrap-update.service
+
+[Install]
+WantedBy=multi-user.target

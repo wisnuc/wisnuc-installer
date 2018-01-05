@@ -72,5 +72,5 @@ typings/
 !target/.gitkeep
 !output/.gitkeep
 
-
-
+# ubuntu iso
+ubuntu-16.04.3-server-amd64.iso

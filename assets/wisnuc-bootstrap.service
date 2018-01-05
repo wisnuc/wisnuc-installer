@@ -1,0 +1,12 @@
+Description=Wisnuc Bootstrap Service
+After=network.target
+
+[Service]
+Type=idle
+ExecStartPre=/bin/cp /wisnuc/wisnuc-bootstrap /wisnuc/wisnuc-bootstrap-run
+ExecStart=/wisnuc/wisnuc-bootstrap-run
+TimeoutStartSec=30
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
