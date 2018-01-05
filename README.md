@@ -32,14 +32,15 @@
 
 ```bash
 # 中华人民共和国境内开发者，执行下面3个命令时建议使用VPN
-git clone https://github.com/wisnuc/wisnuc-installer
-npm i
-node prepare-wisnuc.js
+$ git clone https://github.com/wisnuc/wisnuc-installer
+$ cd wisnuc-installer
+$ npm i
+$ node prepare-wisnuc.js
 
 # 中华人民共和国境内开发者，执行下面3个命令时建议关闭VPN
-sudo ./build-rootfs-emmc-base.sh
-sudo ./build-burn-base.sh
-sudo ./build-image.sh
+$ sudo ./build-rootfs-emmc-base.sh
+$ sudo ./build-burn-base.sh
+$ sudo ./build-image.sh
 ```
 
 输出文件位于output目录下
@@ -236,6 +237,7 @@ $ sudo apt install xorriso tree
 # 下载和创建预安装目录
 # 中华人民共和国境内开发者，执行下面3个命令时建议使用VPN
 $ git clone https://github.com/wisnuc/wisnuc-installer
+$ cd wisnuc-installer
 $ npm i
 $ node prepare-wisnuc.js
 
