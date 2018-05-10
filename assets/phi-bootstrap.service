@@ -1,0 +1,11 @@
+Description=PhiNAS Bootstrap Service
+After=network.target
+
+[Service]
+Type=idle
+ExecStart=/phi/phi-bootstrap-run
+TimeoutStartSec=30
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

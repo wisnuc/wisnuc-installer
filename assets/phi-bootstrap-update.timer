@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs PhiNAS Bootstrap Update every 4 hour
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=4h
+Unit=phi-bootstrap-update.service
+
+[Install]
+WantedBy=multi-user.target
