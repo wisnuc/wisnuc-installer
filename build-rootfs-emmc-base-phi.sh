@@ -94,7 +94,7 @@ chroot ${TARGET} /bin/bash -c "apt -y install sudo initramfs-tools openssh-serve
 chroot ${TARGET} /bin/bash -c "apt -y install avahi-daemon avahi-utils btrfs-tools udisks2"
 chroot ${TARGET} /bin/bash -c "apt -y install libimage-exiftool-perl imagemagick ffmpeg"
 chroot ${TARGET} /bin/bash -c "apt -y install samba rsyslog minidlna"
-chroot ${TARGET} /bin/bash -c "apt -y install linux-image-generic"
+chroot ${TARGET} /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt -y install linux-image-generic"
 
 
 chroot ${TARGET} /bin/bash -c "useradd phinas -b /home -m -s /bin/bash"
